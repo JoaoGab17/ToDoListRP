@@ -149,3 +149,27 @@ body {
     padding: 4px 6px;
     font-size: 12px;
 }
+/* Adicione estas classes no final do seu src/index.css */
+
+.tabs-container {
+  display: flex;
+  border-bottom: 1px solid #444;
+  margin-bottom: 20px;
+}
+.tab-button {
+  padding: 10px 20px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: #888;
+  font-size: 16px;
+  font-weight: bold;
+  border-bottom: 3px solid transparent; /* Borda transparente para manter o alinhamento */
+}
+.tab-button.active {
+  color: #61dafb;
+  border-bottom-color: #61dafb; /* Borda visível apenas na aba ativa */
+}
+.tab-content {
+  padding-top: 10px;
+}
