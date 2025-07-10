@@ -1,8 +1,8 @@
+// src/ListaDeTarefas.jsx (Versão Full-Stack Final)
 import React, { useState, useEffect } from 'react';
 
-// Em vez de: const API_URL = 'http://127.0.0.1:5000';
-// Use:
-const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000';
+// Endereço da sua API na nuvem (Render)
+const API_URL = import.meta.env.VITE_API_URL || 'https://todolistrp.onrender.com';
 
 // --- Componentes Filhos ---
 const TaskForm = ({ onAddTask }) => {
@@ -32,8 +32,10 @@ const TaskForm = ({ onAddTask }) => {
 };
 
 const TaskItem = ({ task, onUpdateStatus, onMoveToTrash }) => {
+  const itemClassName = `task-item ${task.status === 'concluída' ? 'completed' : ''}`;
+
   return (
-    <li className={`task-item ${task.status === 'concluída' ? 'completed' : ''}`}>
+    <li className={itemClassName}>
       <span className="task-item-text">{task.titulo}</span>
       <div className="task-item-actions">
         <select 
@@ -53,66 +55,48 @@ const TaskItem = ({ task, onUpdateStatus, onMoveToTrash }) => {
   );
 };
 
-const TrashedTaskItem = ({ task, onRestoreTask }) => {
-  return (
-    <li className="task-item">
-      <span className="task-item-text completed">{task.titulo}</span>
-      <div className="task-item-actions">
-        <button onClick={() => onRestoreTask(task.id)} className="toggle-button" title="Restaurar Tarefa">
-          ♻️
-        </button>
-      </div>
-    </li>
-  );
-};
-
 // --- Componente Principal ---
 const ListaDeTarefasContainer = () => {
+  // O estado agora começa vazio e será preenchido pela API
   const [tasks, setTasks] = useState([]);
-  const [trashedTasks, setTrashedTasks] = useState([]);
-  const [activeTab, setActiveTab] = useState('active');
   const [loading, setLoading] = useState(true);
 
-  const fetchAllData = async () => {
+  // Função para buscar os dados da API
+  const fetchTasks = async () => {
     try {
       setLoading(true);
-      const [activeRes, trashedRes] = await Promise.all([
-        fetch(`${API_URL}/tarefas`),
-        fetch(`${API_URL}/tarefas/excluidas`)
-      ]);
-      const activeData = await activeRes.json();
-      const trashedData = await trashedRes.json();
-      setTasks(activeData);
-      setTrashedTasks(trashedData);
+      const response = await fetch(`${API_URL}/tarefas`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setTasks(data);
     } catch (error) {
-      console.error("Erro ao buscar dados:", error);
-      alert("Não foi possível conectar ao servidor da API. Verifique se o backend (api.py) está rodando.");
+      console.error("Erro ao buscar tarefas:", error);
+      alert("Não foi possível conectar ao servidor da API. Verifique se a URL da API está correta e se o servidor no Render está no ar.");
     } finally {
       setLoading(false);
     }
   };
 
+  // useEffect com [] no final roda UMA VEZ quando o componente é montado
   useEffect(() => {
-    fetchAllData();
+    fetchTasks();
   }, []);
 
+  // Funções que fazem chamadas de API para manipular os dados
   const addTask = async (text) => {
     await fetch(`${API_URL}/tarefas`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text }),
     });
-    fetchAllData();
-  };
-
-  const moveToTrash = async (id) => {
-    await fetch(`${API_URL}/tarefas/${id}`, { method: 'DELETE' });
-    fetchAllData();
+    fetchTasks(); // Re-busca os dados para atualizar a lista
   };
   
-  const restoreTask = async (id) => {
-    await fetch(`${API_URL}/tarefas/${id}/recuperar`, { method: 'PUT' });
-    fetchAllData();
+  const moveToTrash = async (id) => {
+    await fetch(`${API_URL}/tarefas/${id}`, { method: 'DELETE' });
+    fetchTasks();
   };
 
   const updateStatus = async (id, newStatus) => {
@@ -121,42 +105,29 @@ const ListaDeTarefasContainer = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: newStatus }),
     });
-    fetchAllData();
+    fetchTasks();
   };
   
   return (
     <div className="app-container">
       <h1>To-Do List Full-Stack</h1>
-
-      {/* A LINHA QUE FALTAVA ESTÁ AQUI */}
       <TaskForm onAddTask={addTask} />
 
-      <div className="tabs-container">
-        <button className={`tab ${activeTab === 'active' ? 'active' : ''}`} onClick={() => setActiveTab('active')}>
-          Tarefas Ativas ({tasks.length})
-        </button>
-        <button className={`tab ${activeTab === 'trashed' ? 'active' : ''}`} onClick={() => setActiveTab('trashed')}>
-          Lixeira ({trashedTasks.length})
-        </button>
-      </div>
-
-      <div className="tab-content">
-        {loading ? <p style={{textAlign: 'center'}}>Carregando...</p> : (
-          activeTab === 'active' ? (
-            <ul className="task-list">
-              {tasks.map(task => (
-                <TaskItem key={task.id} task={task} onUpdateStatus={updateStatus} onMoveToTrash={moveToTrash} />
-              ))}
-            </ul>
-          ) : (
-            <ul className="task-list">
-              {trashedTasks.map(task => (
-                <TrashedTaskItem key={task.id} task={task} onRestoreTask={restoreTask} />
-              ))}
-            </ul>
-          )
-        )}
-      </div>
+      {/* Mostra uma mensagem de 'Carregando...' enquanto os dados não chegam */}
+      {loading ? (
+        <p style={{textAlign: 'center'}}>Carregando tarefas do banco de dados na nuvem...</p>
+      ) : (
+        <ul className="task-list">
+          {tasks.map(task => (
+            <TaskItem
+              key={task.id}
+              task={task}
+              onUpdateStatus={updateStatus}
+              onMoveToTrash={moveToTrash}
+            />
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
