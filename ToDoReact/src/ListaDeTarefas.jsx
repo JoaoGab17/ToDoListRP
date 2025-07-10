@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 // Em vez de: const API_URL = 'http://127.0.0.1:5000';
 // Use:
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000';
 
 // --- Componentes Filhos ---
 const TaskForm = ({ onAddTask }) => {
