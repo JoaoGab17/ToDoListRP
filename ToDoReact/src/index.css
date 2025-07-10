@@ -1,0 +1,151 @@
+/* src/index.css */
+
+/* --- Estilos Globais e Tema Escuro --- */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #20232a; /* Fundo escuro */
+  color: #f5f5f5; /* Texto claro */
+}
+
+/* --- Container Principal da Aplicação --- */
+.app-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #282c34; /* Fundo do container um pouco mais claro */
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+.app-container h1 {
+  text-align: center;
+  color: #61dafb; /* Cor do logo do React */
+  margin-top: 0;
+}
+
+/* --- Formulário de Adição --- */
+.task-form {
+  display: flex;
+  margin-bottom: 25px;
+}
+
+.task-input {
+  flex-grow: 1;
+  padding: 12px;
+  font-size: 16px;
+  border: 2px solid #444;
+  border-radius: 6px 0 0 6px;
+  background-color: #333;
+  color: #f5f5f5;
+  outline: none;
+}
+
+.task-input:focus {
+  border-color: #61dafb;
+}
+
+.add-button {
+  padding: 0 20px;
+  font-size: 16px;
+  border: none;
+  background-color: #61dafb;
+  color: #20232a;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 0 6px 6px 0;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.add-button:hover {
+  background-color: #88eaff;
+}
+
+/* --- Estilos para as Abas --- */
+.tabs-container {
+  display: flex;
+  border-bottom: 1px solid #444;
+  margin-bottom: 20px;
+}
+.tab {
+  padding: 10px 20px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: #888;
+  font-size: 16px;
+  font-weight: bold;
+}
+.tab.active {
+  color: #61dafb;
+  border-bottom: 2px solid #61dafb;
+}
+.tab-content {
+  padding-top: 10px;
+}
+
+
+/* --- Lista e Itens de Tarefa --- */
+.task-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #444;
+  transition: background-color 0.2s;
+}
+
+.task-item:last-child {
+  border-bottom: none;
+}
+
+/* Estilo para tarefa concluída */
+.task-item.completed .task-item-text {
+  text-decoration: line-through;
+  color: #888;
+}
+
+.task-item-text {
+  flex-grow: 1;
+}
+
+.task-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.task-item-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #999;
+  transition: transform 0.2s;
+}
+
+.task-item-actions button:hover {
+  transform: scale(1.2);
+}
+
+.remove-button {
+  color: #ff5c5c;
+}
+
+.status-select {
+    background-color: #333;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-size: 12px;
+}
